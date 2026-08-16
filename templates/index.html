@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tek Kullanımlık Geçici Mail</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="w-full max-w-xl bg-slate-800 rounded-2xl shadow-xl p-6 border border-slate-700">
+        <h1 class="text-2xl font-bold text-center mb-6 text-indigo-400">Geçici Mail Kutusu</h1>
+        
+        <!-- Mail Adresi Gösterim Alanı -->
+        <div class="mb-6">
+            <label class="block text-sm text-slate-400 mb-2">E-Posta Adresiniz:</label>
+            <div class="flex gap-2">
+                <input type="text" id="emailDisplay" readonly class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-indigo-200 font-mono text-sm focus:outline-none" value="Mail oluşturuluyor...">
+                <button onclick="copyEmail()" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-3 rounded-lg font-medium transition text-sm whitespace-nowrap">Kopyala</button>
+                <button onclick="generateNewEmail()" class="bg-slate-700 hover:bg-slate-600 px-4 py-3 rounded-lg transition text-sm" title="Yeni Mail Al">🔄</button>
+            </div>
+            <p id="copyAlert" class="text-xs text-emerald-400 mt-1 hidden">Panoya kopyalandı!</p>
+        </div>
+
+        <!-- Gelen Kutusu -->
+        <div class="border-t border-slate-700 pt-4">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="font-semibold text-lg">Gelen Kutusu</h2>
+                <span id="statusIndicator" class="flex items-center text-xs text-emerald-400">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse mr-2"></span> Canlı Dinleniyor
+                </span>
+            </div>
+            
+            <div id="messageList" class="space-y-3 max-h-60 overflow-y-auto pr-1">
+                <div class="text-center text-slate-500 py-8 text-sm">Henüz gelen bir e-posta yok...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mesaj Detay Modalı -->
+    <div id="modal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 w-full max-w-lg rounded-2xl p-6 border border-slate-700 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">✕</button>
+            <h3 id="modalSubject" class="text-lg font-bold mb-2 text-indigo-300"></h3>
+            <p id="modalSender" class="text-xs text-slate-400 mb-4"></p>
+            <div id="modalBody" class="bg-slate-900 p-4 rounded-lg text-sm text-slate-200 overflow-y-auto max-h-60 border border-slate-700"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentToken = "";
+        let pollInterval = null;
+
+        async function generateNewEmail() {
+            clearInterval(pollInterval);
+            document.getElementById("emailDisplay").value = "Oluşturuluyor...";
+            document.getElementById("messageList").innerHTML = '<div class="text-center text-slate-500 py-8 text-sm">Yeni posta kutusu açılıyor...</div>';
+            
+            try {
+                const res = await fetch('/api/create-account');
+                const data = await res.json();
+                currentToken = data.token;
+                document.getElementById("emailDisplay").value = data.email;
+                
+                // Her 3 saniyede bir mailleri kontrol et
+                pollInterval = setInterval(checkMessages, 3000);
+            } catch (err) {
+                alert("Mail oluşturulurken hata oluştu!");
+            }
+        }
+
+        async function checkMessages() {
+            if (!currentToken) return;
+            try {
+                const res = await fetch(`/api/messages?token=${currentToken}`);
+                const messages = await res.json();
+                
+                const listEl = document.getElementById("messageList");
+                if (messages.length === 0) return;
+
+                listEl.innerHTML = "";
+                messages.forEach(msg => {
+                    listEl.innerHTML += `
+                        <div onclick="readMessage('${msg.id}')" class="bg-slate-900 hover:bg-slate-700/50 p-3 rounded-lg border border-slate-700 cursor-pointer transition">
+                            <div class="flex justify-between text-xs text-slate-400 mb-1">
+                                <span class="font-medium text-slate-300">${msg.from.address}</span>
+                                <span>${new Date(msg.createdAt).toLocaleTimeString()}</span>
+                            </div>
+                            <div class="font-medium text-sm text-indigo-200">${msg.subject || 'Konu Yok'}</div>
+                            <div class="text-xs text-slate-400 truncate mt-1">${msg.intro}</div>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                console.error("Mail kontrol hatası:", err);
+            }
+        }
+
+        async function readMessage(id) {
+            try {
+                const res = await fetch(`/api/message/${id}?token=${currentToken}`);
+                const msg = await res.json();
+                
+                document.getElementById("modalSubject").innerText = msg.subject;
+                document.getElementById("modalSender").innerText = "Gönderen: " + msg.from.address;
+                
+                // HTML veya düz metin gösterimi
+                const bodyContainer = document.getElementById("modalBody");
+                if (msg.html && msg.html.length > 0) {
+                    bodyContainer.innerHTML = msg.html[0];
+                } else {
+                    bodyContainer.innerText = msg.text;
+                }
+                
+                document.getElementById("modal").classList.remove("hidden");
+            } catch (err) {
+                alert("Mesaj yüklenemedi.");
+            }
+        }
+
+        function closeModal() {
+            document.getElementById("modal").classList.add("hidden");
+        }
+
+        function copyEmail() {
+            const input = document.getElementById("emailDisplay");
+            navigator.clipboard.writeText(input.value);
+            const alert = document.getElementById("copyAlert");
+            alert.classList.remove("hidden");
+            setTimeout(() => alert.classList.add("hidden"), 2000);
+        }
+
+        // Sayfa açıldığında otomatik ilk maili üret
+        generateNewEmail();
+    </script>
+</body>
+</html>
