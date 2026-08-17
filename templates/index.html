@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QuantumMail - Profesyonel Geçici E-Posta Servisi</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3x.xx.xx/dist/cdn.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -27,75 +28,115 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
         .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(13, 18, 30, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
+        .cyber-bg {
+            background-color: #020617;
+            background-image: 
+                radial-gradient(at 10% 20%, rgba(99, 102, 241, 0.22) 0px, transparent 50%),
+                radial-gradient(at 90% 10%, rgba(147, 51, 234, 0.18) 0px, transparent 50%),
+                radial-gradient(at 50% 90%, rgba(16, 185, 129, 0.15) 0px, transparent 50%),
+                radial-gradient(at 80% 80%, rgba(59, 130, 246, 0.12) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+        /* Özel Kaydırma Çubuğu */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+        ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.4); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.7); }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-between p-4 md:p-6 selection:bg-indigo-500 selection:text-white">
+<body class="cyber-bg text-slate-100 min-h-screen flex flex-col items-center justify-between p-4 md:p-6 selection:bg-indigo-500 selection:text-white">
 
-    <!-- Üst Bilgi / Logo -->
-    <header class="w-full max-w-2xl flex justify-between items-center py-4">
-        <div class="flex items-center space-x-2">
-            <div class="w-9 h-9 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+    <!-- Üst Bilgi / Logo ve Admin -->
+    <header class="w-full max-w-2xl flex justify-between items-center py-4 transition-all duration-300">
+        <div class="flex items-center space-x-3 group cursor-pointer">
+            <div class="w-11 h-11 bg-gradient-to-tr from-indigo-600 via-violet-600 to-indigo-400 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-500/30 border border-indigo-300/30 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
             </div>
-            <span class="font-bold text-xl tracking-tight bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent">QuantumMail</span>
+            <div>
+                <span class="font-bold text-xl tracking-tight bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent">QuantumMail</span>
+                <span class="block text-[10px] text-indigo-400 font-mono tracking-widest uppercase">Next-Gen Privacy</span>
+            </div>
         </div>
+        
         <div class="flex items-center space-x-3">
-            <div id="countdownBadge" class="hidden items-center text-xs bg-indigo-500/10 border border-indigo-500/20 px-3 py-1.5 rounded-full text-indigo-300">
-                ⏳ Süre: <span id="timerText" class="font-mono font-bold ml-1">10:00</span>
+            <!-- Admin Bilgisi -->
+            <div class="hidden sm:flex items-center text-xs bg-slate-900/90 border border-slate-800/80 px-4 py-2 rounded-2xl text-slate-300 gap-2.5 shadow-lg shadow-black/30">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span>Admin: <strong class="text-indigo-400 font-mono tracking-wide">nabermayk</strong></span>
             </div>
-            <button onclick="toggleSound()" id="soundBtn" class="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white transition" title="Bildirim Sesini Aç/Kapat">
+
+            <div id="countdownBadge" class="hidden items-center text-xs bg-indigo-500/10 border border-indigo-500/20 px-3.5 py-2 rounded-2xl text-indigo-300 shadow-lg shadow-indigo-500/5">
+                ⏳ <span id="timerText" class="font-mono font-bold ml-1">10:00</span>
+            </div>
+            <button onclick="toggleSound()" id="soundBtn" class="p-2.5 rounded-2xl bg-slate-900/90 border border-slate-800/80 hover:border-indigo-500/40 text-slate-400 hover:text-white transition-all duration-300 shadow-lg" title="Bildirim Sesini Aç/Kapat">
                 🔔
             </button>
         </div>
     </header>
 
     <!-- Ana Kutu -->
-    <main class="w-full max-w-2xl my-auto">
-        <div class="glass-card rounded-3xl shadow-2xl p-6 md:p-8 border border-slate-800/80 relative overflow-hidden">
-            <!-- Arka plan parıltı efekti -->
-            <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+    <main class="w-full max-w-2xl my-auto py-2">
+        <div class="glass-card rounded-[2.5rem] shadow-2xl p-6 md:p-8 relative overflow-hidden transition-all duration-500 hover:border-indigo-500/40">
+            <!-- Arka plan parıltı efektleri -->
+            <div class="absolute -top-32 -right-32 w-64 h-64 bg-indigo-600/20 rounded-full blur-[90px] pointer-events-none"></div>
+            <div class="absolute -bottom-32 -left-32 w-64 h-64 bg-purple-600/15 rounded-full blur-[90px] pointer-events-none"></div>
             
-            <div class="mb-6">
-                <h1 class="text-xl font-bold text-slate-200 mb-1">Geçici E-Posta Kutunuz</h1>
-                <p class="text-xs text-slate-400">Spamden korunun, mailleriniz anlık olarak şifrelenmiş gelen kutunuza düşer.</p>
+            <!-- Üst Kısım / Karşılama ve Durum Kartı -->
+            <div class="mb-6 relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-xl font-bold text-slate-100 mb-1 flex items-center gap-2">
+                        <span>Geçici E-Posta Kutunuz</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Spamden korunun, mailleriniz anlık olarak şifrelenmiş güvenli gelen kutunuza düşer.</p>
+                </div>
+                <!-- Ekstra Görsel Rozet -->
+                <div class="hidden md:flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1.5 rounded-xl text-[11px] text-indigo-300 font-mono self-start">
+                    <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    <span>Ultra Hızlı Aktarım</span>
+                </div>
             </div>
             
             <!-- Mail Adresi Gösterim Alanı -->
-            <div class="mb-6">
-                <div class="flex flex-col sm:flex-row gap-2">
-                    <div class="relative w-full">
-                        <input type="text" id="emailDisplay" readonly class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-indigo-300 font-mono text-sm focus:outline-none shadow-inner" value="Mail oluşturuluyor...">
+            <div class="mb-6 relative z-10">
+                <div class="flex flex-col sm:flex-row gap-2.5">
+                    <div class="relative w-full group">
+                        <input type="text" id="emailDisplay" readonly class="w-full bg-slate-950/90 border border-slate-800/80 rounded-2xl px-4 py-3.5 text-indigo-300 font-mono text-sm focus:outline-none shadow-inner transition-all duration-300 group-hover:border-indigo-500/50" value="Mail oluşturuluyor...">
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="copyEmail()" class="flex-1 sm:flex-none bg-indigo-600 hover:bg-indigo-500 active:scale-95 px-5 py-3.5 rounded-xl font-semibold transition text-sm shadow-lg shadow-indigo-600/20 whitespace-nowrap flex items-center justify-center gap-2">
+                        <button onclick="copyEmail()" class="flex-1 sm:flex-none bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 active:scale-95 px-5 py-3.5 rounded-2xl font-semibold transition-all duration-300 text-sm shadow-xl shadow-indigo-600/30 whitespace-nowrap flex items-center justify-center gap-2 border border-indigo-400/30">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                             Kopyala
                         </button>
-                        <button onclick="generateNewEmail()" class="bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-700 px-4 py-3.5 rounded-xl transition text-sm flex items-center justify-center" title="Yeni Mail Al">
-                            🔄
+                        <button onclick="generateNewEmail()" class="bg-slate-900/90 hover:bg-slate-800 active:scale-95 border border-slate-800 hover:border-slate-700 px-4 py-3.5 rounded-2xl transition-all duration-300 text-sm flex items-center justify-center shadow-lg group" title="Yeni Mail Al">
+                            <span class="group-hover:rotate-180 transition-transform duration-500 inline-block">🔄</span>
                         </button>
                     </div>
                 </div>
-                <p id="copyAlert" class="text-xs text-emerald-400 mt-2 font-medium hidden flex items-center gap-1">
+                <p id="copyAlert" class="text-xs text-emerald-400 mt-2 font-medium hidden items-center gap-1 transition-all duration-300">
                     ✓ Panoya başarıyla kopyalandı!
                 </p>
             </div>
 
             <!-- Gelen Kutusu -->
-            <div class="border-t border-slate-800/80 pt-5">
+            <div class="border-t border-slate-800/80 pt-5 relative z-10">
                 <div class="flex justify-between items-center mb-4">
                     <div class="flex items-center gap-2">
                         <h2 class="font-semibold text-base text-slate-200">Gelen Kutusu</h2>
-                        <span id="msgCountBadge" class="bg-slate-800 text-indigo-300 text-xs px-2 py-0.5 rounded-full font-mono">0</span>
+                        <span id="msgCountBadge" class="bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 text-xs px-2.5 py-0.5 rounded-full font-mono">0</span>
                     </div>
                     <div class="flex items-center gap-3">
-                        <button onclick="clearMessages()" class="text-xs text-slate-500 hover:text-rose-400 transition" title="Gelen Kutusunu Temizle">Temizle</button>
-                        <span id="statusIndicator" class="flex items-center text-xs text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse mr-1.5"></span> Canlı Dinleniyor
+                        <button onclick="clearMessages()" class="text-xs text-slate-500 hover:text-rose-400 transition-colors" title="Gelen Kutusunu Temizle">Temizle</button>
+                        <span id="statusIndicator" class="flex items-center text-xs text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 shadow-sm">
+                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping mr-1.5"></span> Canlı Dinleniyor
                         </span>
                     </div>
                 </div>
@@ -110,24 +151,31 @@
         </div>
     </main>
 
+    <!-- Mobil Uyumluluk için Alt Admin Rozeti -->
+    <div class="sm:hidden text-xs text-slate-500 mt-2 bg-slate-900/60 border border-slate-800/80 px-3 py-1.5 rounded-xl">
+        Admin: <span class="text-indigo-400 font-mono">nabermayk</span>
+    </div>
+
     <!-- Alt Bilgi -->
-    <footer class="w-full max-w-2xl text-center text-xs text-slate-500 py-4">
-        &copy; 2026 QuantumMail. Tüm hakları saklıdır. Gizliliğiniz bizimle güvende.
+    <footer class="w-full max-w-2xl text-center text-xs text-slate-500 py-4 flex flex-col sm:flex-row items-center justify-center gap-2">
+        <span>&copy; 2026 QuantumMail. Tüm hakları saklıdır.</span>
+        <span class="hidden sm:inline">•</span>
+        <span class="text-slate-400">Güvenli ve Anonim İletişim</span>
     </footer>
 
     <!-- Mesaj Detay Modalı -->
-    <div id="modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 transition-all">
-        <div class="glass-card w-full max-w-xl rounded-3xl p-6 md:p-7 border border-slate-700 shadow-2xl relative animate-in fade-in zoom-in duration-200">
-            <button onclick="closeModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white w-8 h-8 rounded-full bg-slate-800/80 flex items-center justify-center transition">✕</button>
+    <div id="modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4 z-50 transition-all duration-300">
+        <div class="glass-card w-full max-w-xl rounded-[2.5rem] p-6 md:p-7 shadow-2xl relative border border-slate-700/80 transform transition-all">
+            <button onclick="closeModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white w-9 h-9 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center transition-all hover:scale-105">✕</button>
             <div class="mb-4 pr-8">
                 <h3 id="modalSubject" class="text-lg font-bold text-indigo-200 mb-1 leading-snug"></h3>
                 <p id="modalSender" class="text-xs text-slate-400 font-mono"></p>
             </div>
-            <div class="border-t border-slate-700/60 pt-4">
-                <div id="modalBody" class="bg-slate-900/90 p-4 rounded-2xl text-sm text-slate-200 overflow-y-auto max-h-72 border border-slate-800 selection:bg-indigo-500"></div>
+            <div class="border-t border-slate-800/80 pt-4">
+                <div id="modalBody" class="bg-slate-950/90 p-4 rounded-2xl text-sm text-slate-200 overflow-y-auto max-h-72 border border-slate-900 selection:bg-indigo-500"></div>
             </div>
             <div class="mt-5 flex justify-end gap-2">
-                <button onclick="closeModal()" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-medium transition text-slate-300">Kapat</button>
+                <button onclick="closeModal()" class="bg-slate-900 hover:bg-slate-800 border border-slate-800 px-5 py-2.5 rounded-2xl text-xs font-medium transition-all text-slate-300 shadow-md">Kapat</button>
             </div>
         </div>
     </div>
@@ -140,7 +188,6 @@
         let soundEnabled = true;
         let previousMessageCount = 0;
 
-        // Web Audio API kullanarak bildirim sesi üretici
         function playNotificationSound() {
             if (!soundEnabled) return;
             try {
@@ -229,12 +276,12 @@
                 listEl.innerHTML = "";
                 messages.forEach(msg => {
                     listEl.innerHTML += `
-                        <div onclick="readMessage('${msg.id}')" class="bg-slate-900/80 hover:bg-slate-800/90 p-3.5 rounded-2xl border border-slate-800 hover:border-slate-700 cursor-pointer transition shadow-sm group">
-                            <div class="flex justify-between text-xs text-slate-400 mb-1">
+                        <div onclick="readMessage('${msg.id}')" class="bg-slate-900/70 hover:bg-slate-900 p-4 rounded-2xl border border-slate-800/80 hover:border-indigo-500/40 cursor-pointer transition-all duration-300 shadow-sm group transform hover:-translate-y-0.5">
+                            <div class="flex justify-between text-xs text-slate-400 mb-1.5">
                                 <span class="font-medium text-slate-300 truncate max-w-[200px]">${msg.from.address}</span>
                                 <span class="font-mono text-slate-500">${new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                             </div>
-                            <div class="font-semibold text-sm text-indigo-200 group-hover:text-indigo-400 transition truncate">${msg.subject || 'Konu Yok'}</div>
+                            <div class="font-semibold text-sm text-indigo-200 group-hover:text-indigo-400 transition-colors truncate">${msg.subject || 'Konu Yok'}</div>
                             <div class="text-xs text-slate-400 truncate mt-1">${msg.intro || ''}</div>
                         </div>
                     `;
@@ -281,7 +328,11 @@
             navigator.clipboard.writeText(input.value);
             const alert = document.getElementById("copyAlert");
             alert.classList.remove("hidden");
-            setTimeout(() => alert.classList.add("hidden"), 2500);
+            alert.classList.add("flex");
+            setTimeout(() => {
+                alert.classList.remove("flex");
+                alert.classList.add("hidden");
+            }, 2500);
         }
 
         generateNewEmail();
