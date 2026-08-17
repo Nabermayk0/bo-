@@ -1,60 +1,196 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tek Kullanımlık Geçici Mail</title>
+    <title>QuantumMail - Profesyonel Geçici E-Posta Servisi</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-between p-4 md:p-6 selection:bg-indigo-500 selection:text-white">
 
-    <div class="w-full max-w-xl bg-slate-800 rounded-2xl shadow-xl p-6 border border-slate-700">
-        <h1 class="text-2xl font-bold text-center mb-6 text-indigo-400">Geçici Mail Kutusu</h1>
-        
-        <!-- Mail Adresi Gösterim Alanı -->
-        <div class="mb-6">
-            <label class="block text-sm text-slate-400 mb-2">E-Posta Adresiniz:</label>
-            <div class="flex gap-2">
-                <input type="text" id="emailDisplay" readonly class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-indigo-200 font-mono text-sm focus:outline-none" value="Mail oluşturuluyor...">
-                <button onclick="copyEmail()" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-3 rounded-lg font-medium transition text-sm whitespace-nowrap">Kopyala</button>
-                <button onclick="generateNewEmail()" class="bg-slate-700 hover:bg-slate-600 px-4 py-3 rounded-lg transition text-sm" title="Yeni Mail Al">🔄</button>
+    <!-- Üst Bilgi / Logo -->
+    <header class="w-full max-w-2xl flex justify-between items-center py-4">
+        <div class="flex items-center space-x-2">
+            <div class="w-9 h-9 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
             </div>
-            <p id="copyAlert" class="text-xs text-emerald-400 mt-1 hidden">Panoya kopyalandı!</p>
+            <span class="font-bold text-xl tracking-tight bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent">QuantumMail</span>
         </div>
+        <div class="flex items-center space-x-3">
+            <div id="countdownBadge" class="hidden items-center text-xs bg-indigo-500/10 border border-indigo-500/20 px-3 py-1.5 rounded-full text-indigo-300">
+                ⏳ Süre: <span id="timerText" class="font-mono font-bold ml-1">10:00</span>
+            </div>
+            <button onclick="toggleSound()" id="soundBtn" class="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white transition" title="Bildirim Sesini Aç/Kapat">
+                🔔
+            </button>
+        </div>
+    </header>
 
-        <!-- Gelen Kutusu -->
-        <div class="border-t border-slate-700 pt-4">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="font-semibold text-lg">Gelen Kutusu</h2>
-                <span id="statusIndicator" class="flex items-center text-xs text-emerald-400">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse mr-2"></span> Canlı Dinleniyor
-                </span>
+    <!-- Ana Kutu -->
+    <main class="w-full max-w-2xl my-auto">
+        <div class="glass-card rounded-3xl shadow-2xl p-6 md:p-8 border border-slate-800/80 relative overflow-hidden">
+            <!-- Arka plan parıltı efekti -->
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="mb-6">
+                <h1 class="text-xl font-bold text-slate-200 mb-1">Geçici E-Posta Kutunuz</h1>
+                <p class="text-xs text-slate-400">Spamden korunun, mailleriniz anlık olarak şifrelenmiş gelen kutunuza düşer.</p>
             </div>
             
-            <div id="messageList" class="space-y-3 max-h-60 overflow-y-auto pr-1">
-                <div class="text-center text-slate-500 py-8 text-sm">Henüz gelen bir e-posta yok...</div>
+            <!-- Mail Adresi Gösterim Alanı -->
+            <div class="mb-6">
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <div class="relative w-full">
+                        <input type="text" id="emailDisplay" readonly class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-3.5 text-indigo-300 font-mono text-sm focus:outline-none shadow-inner" value="Mail oluşturuluyor...">
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="copyEmail()" class="flex-1 sm:flex-none bg-indigo-600 hover:bg-indigo-500 active:scale-95 px-5 py-3.5 rounded-xl font-semibold transition text-sm shadow-lg shadow-indigo-600/20 whitespace-nowrap flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            Kopyala
+                        </button>
+                        <button onclick="generateNewEmail()" class="bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-700 px-4 py-3.5 rounded-xl transition text-sm flex items-center justify-center" title="Yeni Mail Al">
+                            🔄
+                        </button>
+                    </div>
+                </div>
+                <p id="copyAlert" class="text-xs text-emerald-400 mt-2 font-medium hidden flex items-center gap-1">
+                    ✓ Panoya başarıyla kopyalandı!
+                </p>
+            </div>
+
+            <!-- Gelen Kutusu -->
+            <div class="border-t border-slate-800/80 pt-5">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center gap-2">
+                        <h2 class="font-semibold text-base text-slate-200">Gelen Kutusu</h2>
+                        <span id="msgCountBadge" class="bg-slate-800 text-indigo-300 text-xs px-2 py-0.5 rounded-full font-mono">0</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="clearMessages()" class="text-xs text-slate-500 hover:text-rose-400 transition" title="Gelen Kutusunu Temizle">Temizle</button>
+                        <span id="statusIndicator" class="flex items-center text-xs text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse mr-1.5"></span> Canlı Dinleniyor
+                        </span>
+                    </div>
+                </div>
+                
+                <div id="messageList" class="space-y-2.5 max-h-64 overflow-y-auto pr-1">
+                    <div class="text-center text-slate-500 py-10 text-sm flex flex-col items-center justify-center gap-2">
+                        <svg class="w-8 h-8 text-slate-600 animate-bounce" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                        Henüz gelen bir e-posta yok. Bekleniyor...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Alt Bilgi -->
+    <footer class="w-full max-w-2xl text-center text-xs text-slate-500 py-4">
+        &copy; 2026 QuantumMail. Tüm hakları saklıdır. Gizliliğiniz bizimle güvende.
+    </footer>
+
+    <!-- Mesaj Detay Modalı -->
+    <div id="modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 transition-all">
+        <div class="glass-card w-full max-w-xl rounded-3xl p-6 md:p-7 border border-slate-700 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white w-8 h-8 rounded-full bg-slate-800/80 flex items-center justify-center transition">✕</button>
+            <div class="mb-4 pr-8">
+                <h3 id="modalSubject" class="text-lg font-bold text-indigo-200 mb-1 leading-snug"></h3>
+                <p id="modalSender" class="text-xs text-slate-400 font-mono"></p>
+            </div>
+            <div class="border-t border-slate-700/60 pt-4">
+                <div id="modalBody" class="bg-slate-900/90 p-4 rounded-2xl text-sm text-slate-200 overflow-y-auto max-h-72 border border-slate-800 selection:bg-indigo-500"></div>
+            </div>
+            <div class="mt-5 flex justify-end gap-2">
+                <button onclick="closeModal()" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-medium transition text-slate-300">Kapat</button>
             </div>
         </div>
     </div>
 
-    <!-- Mesaj Detay Modalı -->
-    <div id="modal" class="fixed inset-0 bg-black/70 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-800 w-full max-w-lg rounded-2xl p-6 border border-slate-700 relative">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">✕</button>
-            <h3 id="modalSubject" class="text-lg font-bold mb-2 text-indigo-300"></h3>
-            <p id="modalSender" class="text-xs text-slate-400 mb-4"></p>
-            <div id="modalBody" class="bg-slate-900 p-4 rounded-lg text-sm text-slate-200 overflow-y-auto max-h-60 border border-slate-700"></div>
-        </div>
-    </div>
-
+    <!-- Script Kodları -->
     <script>
         let currentToken = "";
         let pollInterval = null;
+        let timerInterval = null;
+        let soundEnabled = true;
+        let previousMessageCount = 0;
+
+        // Web Audio API kullanarak bildirim sesi üretici
+        function playNotificationSound() {
+            if (!soundEnabled) return;
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } catch (e) {}
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById("soundBtn");
+            btn.innerText = soundEnabled ? "🔔" : "🔕";
+        }
+
+        function startTimer() {
+            let timeLeft = 600; // 10 Dakika
+            const badge = document.getElementById("countdownBadge");
+            const text = document.getElementById("timerText");
+            badge.classList.remove("hidden");
+            badge.classList.add("flex");
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                text.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    generateNewEmail();
+                }
+                timeLeft--;
+            }, 1000);
+        }
 
         async function generateNewEmail() {
             clearInterval(pollInterval);
+            previousMessageCount = 0;
             document.getElementById("emailDisplay").value = "Oluşturuluyor...";
-            document.getElementById("messageList").innerHTML = '<div class="text-center text-slate-500 py-8 text-sm">Yeni posta kutusu açılıyor...</div>';
+            document.getElementById("messageList").innerHTML = '<div class="text-center text-slate-500 py-10 text-sm">Yeni posta kutusu açılıyor...</div>';
+            document.getElementById("msgCountBadge").innerText = "0";
             
             try {
                 const res = await fetch('/api/create-account');
@@ -62,10 +198,10 @@
                 currentToken = data.token;
                 document.getElementById("emailDisplay").value = data.email;
                 
-                // Her 3 saniyede bir mailleri kontrol et
+                startTimer();
                 pollInterval = setInterval(checkMessages, 3000);
             } catch (err) {
-                alert("Mail oluşturulurken hata oluştu!");
+                document.getElementById("emailDisplay").value = "Hata oluştu, tekrar deneyin.";
             }
         }
 
@@ -76,18 +212,30 @@
                 const messages = await res.json();
                 
                 const listEl = document.getElementById("messageList");
-                if (messages.length === 0) return;
+                document.getElementById("msgCountBadge").innerText = messages.length;
+
+                if (messages.length > previousMessageCount) {
+                    if (previousMessageCount !== 0) {
+                        playNotificationSound();
+                    }
+                    previousMessageCount = messages.length;
+                }
+
+                if (messages.length === 0) {
+                    listEl.innerHTML = '<div class="text-center text-slate-500 py-10 text-sm">Henüz gelen bir e-posta yok. Bekleniyor...</div>';
+                    return;
+                }
 
                 listEl.innerHTML = "";
                 messages.forEach(msg => {
                     listEl.innerHTML += `
-                        <div onclick="readMessage('${msg.id}')" class="bg-slate-900 hover:bg-slate-700/50 p-3 rounded-lg border border-slate-700 cursor-pointer transition">
+                        <div onclick="readMessage('${msg.id}')" class="bg-slate-900/80 hover:bg-slate-800/90 p-3.5 rounded-2xl border border-slate-800 hover:border-slate-700 cursor-pointer transition shadow-sm group">
                             <div class="flex justify-between text-xs text-slate-400 mb-1">
-                                <span class="font-medium text-slate-300">${msg.from.address}</span>
-                                <span>${new Date(msg.createdAt).toLocaleTimeString()}</span>
+                                <span class="font-medium text-slate-300 truncate max-w-[200px]">${msg.from.address}</span>
+                                <span class="font-mono text-slate-500">${new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                             </div>
-                            <div class="font-medium text-sm text-indigo-200">${msg.subject || 'Konu Yok'}</div>
-                            <div class="text-xs text-slate-400 truncate mt-1">${msg.intro}</div>
+                            <div class="font-semibold text-sm text-indigo-200 group-hover:text-indigo-400 transition truncate">${msg.subject || 'Konu Yok'}</div>
+                            <div class="text-xs text-slate-400 truncate mt-1">${msg.intro || ''}</div>
                         </div>
                     `;
                 });
@@ -101,15 +249,14 @@
                 const res = await fetch(`/api/message/${id}?token=${currentToken}`);
                 const msg = await res.json();
                 
-                document.getElementById("modalSubject").innerText = msg.subject;
+                document.getElementById("modalSubject").innerText = msg.subject || 'Konu Yok';
                 document.getElementById("modalSender").innerText = "Gönderen: " + msg.from.address;
                 
-                // HTML veya düz metin gösterimi
                 const bodyContainer = document.getElementById("modalBody");
                 if (msg.html && msg.html.length > 0) {
                     bodyContainer.innerHTML = msg.html[0];
                 } else {
-                    bodyContainer.innerText = msg.text;
+                    bodyContainer.innerText = msg.text || 'İçerik bulunamadı.';
                 }
                 
                 document.getElementById("modal").classList.remove("hidden");
@@ -122,15 +269,21 @@
             document.getElementById("modal").classList.add("hidden");
         }
 
+        function clearMessages() {
+            previousMessageCount = 0;
+            document.getElementById("messageList").innerHTML = '<div class="text-center text-slate-500 py-10 text-sm">Gelen kutusu temizlendi.</div>';
+            document.getElementById("msgCountBadge").innerText = "0";
+        }
+
         function copyEmail() {
             const input = document.getElementById("emailDisplay");
+            if (!input.value.includes("@")) return;
             navigator.clipboard.writeText(input.value);
             const alert = document.getElementById("copyAlert");
             alert.classList.remove("hidden");
-            setTimeout(() => alert.classList.add("hidden"), 2000);
+            setTimeout(() => alert.classList.add("hidden"), 2500);
         }
 
-        // Sayfa açıldığında otomatik ilk maili üret
         generateNewEmail();
     </script>
 </body>
