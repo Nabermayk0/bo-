@@ -3,71 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Özür Dilerim...</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Özür Dilerim</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @keyframes float {
-            0%, 100% { transform: translateY(0px) scale(1); }
-            50% { transform: translateY(-10px) scale(1.05); }
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
         }
-        .float-animation {
-            animation: float 4s ease-in-out infinite;
+        /* Yukarıdan Aşağıya Yağmur Gibi Akan Efekt */
+        @keyframes rainFall {
+            0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0; }
+            15% { opacity: 0.9; }
+            85% { opacity: 0.9; }
+            100% { transform: translateY(105vh) translateX(30px) rotate(360deg); opacity: 0; }
         }
+        .float-anim { animation: float 5s ease-in-out infinite; }
+        
+        .falling-element {
+            position: absolute;
+            top: -50px;
+            animation: rainFall linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fdf2f8; }
+        ::-webkit-scrollbar-thumb { background: #f472b6; border-radius: 4px; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-purple-950 to-indigo-950 text-white min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden relative">
+<body class="bg-gradient-to-br from-pink-100 via-rose-100 to-pink-200 text-slate-700 font-sans min-h-screen selection:bg-rose-400 selection:text-white overflow-x-hidden relative flex flex-col items-center justify-center p-4">
 
-    <!-- Arka Plan Dekoratif Işıklar -->
-    <div class="absolute -top-32 -left-32 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- Arka Planda Canlı Olarak Yağmur Gibi Yağan Efektler -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="falling-element text-3xl" style="left: 5%; animation-duration: 6s; animation-delay: 0s;">🧸</div>
+        <div class="falling-element text-xl" style="left: 15%; animation-duration: 4s; animation-delay: 1s;">💖</div>
+        <div class="falling-element text-2xl" style="left: 25%; animation-duration: 7s; animation-delay: 2s;">🌸</div>
+        <div class="falling-element text-3xl" style="left: 35%; animation-duration: 5s; animation-delay: 0.5s;">🧸</div>
+        <div class="falling-element text-2xl" style="left: 45%; animation-duration: 6s; animation-delay: 3s;">💗</div>
+        <div class="falling-element text-4xl" style="left: 55%; animation-duration: 4.5s; animation-delay: 1.5s;">🧸</div>
+        <div class="falling-element text-xl" style="left: 65%; animation-duration: 8s; animation-delay: 2.5s;">✨</div>
+        <div class="falling-element text-3xl" style="left: 75%; animation-duration: 5.5s; animation-delay: 0.2s;">💖</div>
+        <div class="falling-element text-2xl" style="left: 85%; animation-duration: 6.5s; animation-delay: 1.8s;">🌸</div>
+        <div class="falling-element text-3xl" style="left: 95%; animation-duration: 4.8s; animation-delay: 3.5s;">🧸</div>
+    </div>
 
-    <!-- Ana Kart -->
-    <div class="relative z-10 max-w-lg w-89 sm:w-96 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl text-center float-animation">
+    <!-- Ana İçerik Kartı -->
+    <main class="relative z-10 max-w-lg w-full bg-white/85 backdrop-blur-2xl border border-pink-200/90 rounded-3xl p-6 sm:p-8 shadow-2xl text-center float-anim my-8">
         
-        <!-- Kalp İkonu -->
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-rose-500/20 text-rose-400 rounded-2xl mb-6 shadow-inner border border-rose-500/30">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-            </svg>
+        <!-- Sevimli Ayı İkonu -->
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-tr from-pink-200 to-rose-200 text-4xl rounded-3xl mb-4 shadow-inner border border-pink-300">
+            🧸
         </div>
 
         <!-- Başlık -->
-        <h1 class="text-2xl sm:text-3xl font-bold tracking-wide mb-3 bg-gradient-to-r from-rose-300 via-pink-300 to-purple-300 bg-clip-text text-transparent">
-            Çok Özür Dilerim
+        <h1 class="text-2xl sm:text-3xl font-black tracking-tight mb-3 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-500 bg-clip-text text-transparent">
+            Özür Dilerim
         </h1>
-
-        <!-- Mesaj -->
-        <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
-            Kasıtsızlıkla da olsa seni kırdıysam ya da yanlış bir kelime çıktıysa ağzımdan, kalbini kırmak en son isteyeceğim şeydi. Değerlisin, bunu unutmamanı dilerim... Bu şarkıyı da senin için açtım.
+        
+        <!-- Açıklama Metni -->
+        <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-6 font-medium">
+            Kasıtsızlıkla da olsa seni kırdıysam ya da yanlış bir şey söyledimse kusura bakma. Kırmak en son isteyeceğim şeydi. Bu şarkıyı ve bu sayfayı senin için bıraktım.
         </p>
 
-        <!-- Şarkı Bilgisi -->
-        <div class="bg-black/30 border border-white/10 rounded-2xl p-4 flex items-center space-x-4 mb-6">
-            <div class="w-12 h-12 bg-rose-500/30 rounded-xl flex items-center justify-center text-rose-300 flex-shrink-0">
-                🎵
+        <!-- Yerel MP3 Dosyası Oynatıcısı -->
+        <div class="mb-6 bg-pink-50/90 border border-pink-200 p-4 rounded-2xl flex flex-col items-center shadow-inner">
+            <div class="flex items-center space-x-2 mb-2 text-rose-500 text-xs font-bold uppercase tracking-wider">
+                <span>🎵</span>
+                <span>Rauf & Faik - Akşamlar (Vechera)</span>
             </div>
-            <div class="text-left overflow-hidden">
-                <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Şimdi Çalıyor</p>
-                <p class="text-sm font-medium text-white truncate">Rauf & Faik - Vechera (Akşamlar)</p>
-            </div>
+            <!-- Aynı klasördeki sarki.mp3 dosyasını doğrudan çalıştırır -->
+            <audio controls loop class="w-full h-10 accent-rose-500">
+                <source src="sarki.mp3" type="audio/mp3">
+                Tarayıcınız ses oynatmayı desteklemiyor.
+            </audio>
+            <p class="text-[11px] text-slate-400 mt-2">Müziği başlatmak için oynat tuşuna basabilirsin.</p>
         </div>
 
-        <!-- İnteraktif Buton -->
-        <button onclick="showAlert()" class="w-full py-3 px-6 bg-gradient-to-r from-rose-500 to-purple-600 hover:from-rose-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-300 transform active:scale-95 cursor-pointer">
-            Beni Affet ❤️
-        </button>
-    </div>
+        <!-- Etkileşim Alanı -->
+        <div id="buttonContainer" class="flex flex-col sm:flex-row items-center justify-center gap-3 relative min-h-[50px]">
+            <button onclick="acceptApology()" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold rounded-2xl shadow-lg shadow-rose-500/30 transition-all transform active:scale-95 cursor-pointer text-sm">
+                Sorun değil, affettim 🧸❤️
+            </button>
+            <button id="runawayBtn" onmouseover="moveButton()" onclick="moveButton()" class="w-full sm:w-auto px-6 py-3 bg-pink-100 hover:bg-pink-200 text-rose-600 font-bold rounded-2xl border border-pink-200 transition-all cursor-pointer text-sm">
+                Hala biraz kırgınım 🙃
+            </button>
+        </div>
 
-    <!-- Gizli / Otomatik Başlayan YouTube Müzik Çalar (Rauf Faik - Akşamlar) -->
-    <div class="hidden">
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/5VFCkzCW4vA?autoplay=1&loop=1&playlist=5VFCkzCW4vA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    </div>
+        <!-- Başarı Mesajı -->
+        <div id="successMessage" class="hidden mt-6 p-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-2xl shadow-lg text-sm font-medium">
+            iyi ki varsın unutma benim için herşeyden özel birisin ! ✨
+        </div>
 
-    <!-- Küçük Etkileşim Scripti -->
+    </main>
+
+    <!-- İmza Notu -->
+    <footer class="relative z-10 text-center pb-4 text-xs font-medium text-rose-600/80 bg-white/40 backdrop-blur-sm px-5 py-2 rounded-full border border-pink-200 shadow-sm">
+        Emre tarafından sana özel tasarlandı
+    </footer>
+
+    <!-- JavaScript Kodları -->
     <script>
-        function showAlert() {
-            alert("Umarım bu küçük jest ve şarkı kalbini yumuşatmaya yetmiştir. İyi ki varsın!");
+        function moveButton() {
+            const btn = document.getElementById('runawayBtn');
+            const randomX = Math.floor(Math.random() * 140) - 70;
+            const randomY = Math.floor(Math.random() * 60) - 30;
+            btn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+        }
+
+        function acceptApology() {
+            document.getElementById('buttonContainer').style.display = 'none';
+            document.getElementById('successMessage').classList.remove('hidden');
         }
     </script>
 </body>
